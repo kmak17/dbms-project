@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Room Booking System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f9fafb;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Header */
+    header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 32px;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .header-title p {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat-pill {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .stat-pill strong {
+      color: #111827;
+      font-weight: 700;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs-wrapper {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0 32px;
+    }
+
+    .nav-tabs {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 14px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      color: #111827;
+    }
+
+    .tab-btn.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 32px 48px;
+      flex: 1;
+    }
+
+    .tab-section {
+      display: none;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    /* Plain White Box Card */
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Action & Search Bar */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 320px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+
+    .btn-outline:hover {
+      background: #f3f4f6;
+    }
+
+    .btn-edit {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      color: #2563eb;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .btn-edit:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .btn-delete {
+      background: #ffffff;
+      border: 1px solid #fca5a5;
+      color: #dc2626;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .btn-delete:hover {
+      background: #fef2f2;
+    }
+
+    /* Clean White Data Table */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: #f9fafb;
+      color: #4b5563;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f3f4f6;
+      color: #1f2937;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background-color: #f9fafb;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+
+    .badge-room {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #dbeafe;
+    }
+
+    .badge-unassigned {
+      background: #f3f4f6;
+      color: #6b7280;
+      border: 1px solid #e5e7eb;
+    }
+
+    .badge-available {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-occupied {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 16px;
+      color: #6b7280;
+    }
+
+    .empty-state p {
+      margin-top: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* 5 Blocks Room Grid */
+    .block-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .block-btn {
+      padding: 8px 16px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    .block-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .room-box {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .room-box-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .room-box-number {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .room-box-occupant {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-top: 4px;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .form-control {
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: #2563eb;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* Footer */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      padding: 16px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="header-content">
+      <div class="header-title">
+        <h1>Hostel Room Booking System</h1>
+        <p>Student Management & Room Allocation • 5 Blocks (100 Rooms Total)</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-pill">Total Rooms: <strong>100</strong></div>
+        <div class="stat-pill">Occupied: <strong id="stat-occupied">0</strong></div>
+        <div class="stat-pill">Available: <strong id="stat-available">100</strong></div>
+        <div class="stat-pill">Students: <strong id="stat-students">0</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs-wrapper">
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-students')">Students (CRUD)</button>
+      <button class="tab-btn" onclick="switchTab('tab-rooms')">5 Blocks & Rooms Matrix</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- TAB 1: STUDENTS CRUD -->
+    <section id="tab-students" class="tab-section active">
+      <div class="card">
+        <div class="action-bar">
+          <input type="text" id="search-input" class="search-input" placeholder="Search by roll no, name, or department..." oninput="handleSearch()">
+          <button class="btn btn-primary" onclick="openAddStudentModal()">+ Add Student</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 50px;">#</th>
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Gender</th>
+                <th>Department</th>
+                <th>Phone</th>
+                <th>Hostel Block</th>
+                <th>Room Number</th>
+                <th style="text-align: right; width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="students-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: 5 BLOCKS ROOM MATRIX -->
+    <section id="tab-rooms" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Room Occupancy Matrix (20 Rooms per Block)</h2>
+        </div>
+
+        <!-- 5 Block Selection Buttons -->
+        <div class="block-selector">
+          <button class="block-btn active" onclick="selectBlock(1, this)">Block A (Rooms A-101 to A-120)</button>
+          <button class="block-btn" onclick="selectBlock(2, this)">Block B (Rooms B-201 to B-220)</button>
+          <button class="block-btn" onclick="selectBlock(3, this)">Block C (Rooms C-301 to C-320)</button>
+          <button class="block-btn" onclick="selectBlock(4, this)">Block D (Rooms D-401 to D-420)</button>
+          <button class="block-btn" onclick="selectBlock(5, this)">Block E (Rooms E-501 to E-520)</button>
+        </div>
+
+        <!-- Grid of 20 Rooms -->
+        <div class="room-grid" id="rooms-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: ADD / EDIT STUDENT -->
+  <div class="modal-backdrop" id="student-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Student</h3>
+        <button class="close-btn" onclick="closeStudentModal()">&times;</button>
+      </div>
+
+      <form id="student-form" onsubmit="saveStudent(event)">
+        <input type="hidden" id="form-student-id">
+
+        <div class="form-group">
+          <label>Roll Number *</label>
+          <input type="text" id="form-roll-no" class="form-control" placeholder="e.g. 26D2DIT001" required>
+        </div>
+
+        <div class="form-group">
+          <label>Student Name *</label>
+          <input type="text" id="form-name" class="form-control" placeholder="e.g. Aarav Mehta" required>
+        </div>
+
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="form-gender" class="form-control">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" id="form-dept" class="form-control" placeholder="e.g. Information Technology">
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="form-phone" class="form-control" placeholder="e.g. 9876543210">
+        </div>
+
+        <div class="form-group">
+          <label>Allocated Room</label>
+          <select id="form-room-id" class="form-control">
+            <option value="">-- None (Unassigned) --</option>
+            <!-- Available rooms populated dynamically -->
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeStudentModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    DBMS Micro-Project: Hostel Room Booking System • 5 Blocks with 20 Rooms Each
+  </footer>
+
+  <script>
+    let currentSelectedBlockId = 1;
+    let cachedStudents = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadStats();
+      loadStudents();
+      loadRooms(1);
+    });
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+
+      if (tabId === 'tab-students') {
+        loadStudents();
+      } else if (tabId === 'tab-rooms') {
+        loadRooms(currentSelectedBlockId);
+      }
+    }
+
+    // Load overall statistics
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/summary');
+        const data = await res.json();
+        document.getElementById('stat-occupied').innerText = data.occupied_rooms;
+        document.getElementById('stat-available').innerText = data.available_rooms;
+      } catch (e) {
+        console.error("Stats error", e);
+      }
+    }
+
+    // READ: Load Students List
+    async function loadStudents(searchQuery = "") {
+      try {
+        const url = searchQuery ? `/api/students?q=${encodeURIComponent(searchQuery)}` : '/api/students';
+        const res = await fetch(url);
+        cachedStudents = await res.json();
+
+        document.getElementById('stat-students').innerText = cachedStudents.length;
+        const tbody = document.getElementById('students-tbody');
+        tbody.innerHTML = '';
+
+        if (cachedStudents.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9" class="empty-state">
+                <strong>No students found.</strong>
+                <p>Click "+ Add Student" above to create a new student record.</p>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        cachedStudents.forEach((st, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td><strong>${st.roll_no}</strong></td>
+            <td>${st.name}</td>
+            <td>${st.gender || '-'}</td>
+            <td>${st.department || '-'}</td>
+            <td>${st.phone || '-'}</td>
+            <td>${st.block_name || '<span class="badge badge-unassigned">Unassigned</span>'}</td>
+            <td>${st.room_number ? `<span class="badge badge-room">${st.room_number}</span>` : '<span class="badge badge-unassigned">None</span>'}</td>
+            <td style="text-align: right;">
+              <button class="btn btn-edit" onclick="openEditStudentModal(${st.student_id})">Edit</button>
+              <button class="btn btn-delete" onclick="deleteStudent(${st.student_id}, '${st.name}', '${st.roll_no}')">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Failed to load students", e);
+      }
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('search-input').value;
+      loadStudents(q);
+    }
+
+    // CREATE: Open Add Student Modal
+    async function openAddStudentModal() {
+      document.getElementById('modal-title').innerText = "Add New Student";
+      document.getElementById('form-student-id').value = "";
+      document.getElementById('form-roll-no').value = "";
+      document.getElementById('form-name').value = "";
+      document.getElementById('form-gender').value = "Male";
+      document.getElementById('form-dept').value = "";
+      document.getElementById('form-phone').value = "";
+      document.getElementById('btn-save').innerText = "Save Student";
+
+      await populateRoomDropdown();
+      document.getElementById('student-modal').classList.add('open');
+    }
+
+    // UPDATE: Open Edit Student Modal
+    async function openEditStudentModal(studentId) {
+      try {
+        const res = await fetch(`/api/students/${studentId}`);
+        const st = await res.json();
+
+        document.getElementById('modal-title').innerText = "Edit Student";
+        document.getElementById('form-student-id').value = st.student_id;
+        document.getElementById('form-roll-no').value = st.roll_no;
+        document.getElementById('form-name').value = st.name;
+        document.getElementById('form-gender').value = st.gender || "Male";
+        document.getElementById('form-dept').value = st.department || "";
+        document.getElementById('form-phone').value = st.phone || "";
+        document.getElementById('btn-save').innerText = "Update Student";
+
+        await populateRoomDropdown(st.room_id);
+        if (st.room_id) {
+          document.getElementById('form-room-id').value = st.room_id;
+        }
+
+        document.getElementById('student-modal').classList.add('open');
+      } catch (e) {
+        alert("Failed to load student details: " + e);
+      }
+    }
+
+    function closeStudentModal() {
+      document.getElementById('student-modal').classList.remove('open');
+    }
+
+    // Populate Available Rooms Dropdown
+    async function populateRoomDropdown(includeRoomId = null) {
+      const select = document.getElementById('form-room-id');
+      select.innerHTML = '<option value="">-- None (Unassigned) --</option>';
+
+      try {
+        const url = includeRoomId 
+          ? `/api/rooms?available=1&include_room_id=${includeRoomId}` 
+          : '/api/rooms?available=1';
+        const res = await fetch(url);
+        const rooms = await res.json();
+
+        // Group rooms by block name
+        const groups = {};
+        rooms.forEach(r => {
+          if (!groups[r.block_name]) groups[r.block_name] = [];
+          groups[r.block_name].push(r);
+        });
+
+        for (const [blockName, bRooms] of Object.entries(groups)) {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = blockName;
+          bRooms.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.room_id;
+            opt.innerText = `${r.room_number} (${blockName})`;
+            optgroup.appendChild(opt);
+          });
+          select.appendChild(optgroup);
+        }
+      } catch (e) {
+        console.error("Room dropdown error", e);
+      }
+    }
+
+    // CREATE / UPDATE: Submit Student Form
+    async function saveStudent(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('form-student-id').value;
+      const roll_no = document.getElementById('form-roll-no').value.trim();
+      const name = document.getElementById('form-name').value.trim();
+      const gender = document.getElementById('form-gender').value;
+      const department = document.getElementById('form-dept').value.trim();
+      const phone = document.getElementById('form-phone').value.trim();
+      const room_id = document.getElementById('form-room-id').value || null;
+
+      const payload = { roll_no, name, gender, department, phone, room_id };
+
+      try {
+        let res;
+        if (studentId) {
+          // UPDATE
+          res = await fetch(`/api/students/${studentId}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+        } else {
+          // CREATE
+          res = await fetch('/api/students', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const data = await res.json();
+        if (data.success) {
+          closeStudentModal();
+          loadStudents();
+          loadStats();
+          loadRooms(currentSelectedBlockId);
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (e) {
+        alert("Request error: " + e);
+      }
+    }
+
+    // DELETE: Delete Student
+    async function deleteStudent(studentId, name, rollNo) {
+      if (!confirm(`Are you sure you want to delete student "${name}" (${rollNo})?\n\nIf they occupy a room, it will be immediately freed up.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/students/${studentId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          loadStudents();
+          loadStats();
+          loadRooms(currentSelectedBlockId);
+        } else {
+          alert("Failed: " + data.message);
+        }
+      } catch (e) {
+        alert("Error: " + e);
+      }
+    }
+
+    // Block Selector for Room Matrix
+    function selectBlock(blockId, btn) {
+      currentSelectedBlockId = blockId;
+      document.querySelectorAll('.block-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadRooms(blockId);
+    }
+
+    // READ: Load 20 Rooms of Selected Block
+    async function loadRooms(blockId) {
+      try {
+        const res = await fetch(`/api/rooms?block_id=${blockId}`);
+        const rooms = await res.json();
+
+        const grid = document.getElementById('rooms-grid');
+        grid.innerHTML = '';
+
+        rooms.forEach(r => {
+          const isOcc = r.status === 'Occupied';
+          const box = document.createElement('div');
+          box.className = 'room-box';
+          box.innerHTML = `
+            <div class="room-box-top">
+              <span class="room-box-number">${r.room_number}</span>
+              <span class="badge ${isOcc ? 'badge-occupied' : 'badge-available'}">${r.status}</span>
+            </div>
+            <div class="room-box-occupant">
+              ${isOcc ? `<strong>Student:</strong> ${r.student_name} (${r.roll_no})` : '<span style="color:#047857;">Ready for booking</span>'}
+            </div>
+          `;
+          grid.appendChild(box);
+        });
+      } catch (e) {
+        console.error("Failed to load rooms", e);
+      }
+    }
+  </script>
+</body>
+</html>
